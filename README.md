@@ -62,7 +62,39 @@
   });
   ```
 
-- React에서 Sanity 데이터 fetch 예시:
+- React에서 Sanity Client 설정
+
+  ```js
+  // src/lib/sanity/client.ts
+  import { createClient } from "@sanity/client";
+
+  export const client = createClient({
+    projectId: "ddqbxgsr",
+    dataset: "production",
+    apiVersion: "2023-05-03",
+    useCdn: false, // 읽기 전용, 빠른 응답, 캐시 사용 (false 설정 시 캐시없이 최신 데이터 요청)
+  });
+  ```
+
+- React에서 Sanity Image 렌더 설정
+
+  ```js
+  // src/lib/sanity/sanityImageUrl.ts
+  import { client } from "./client";
+
+  import imageUrlBuilder from "@sanity/image-url";
+  import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+
+  // Create an image URL builder using the client
+  const builder = imageUrlBuilder(client);
+
+  // Export a function that can be used to get image URLs
+  export function urlFor(source: SanityImageSource) {
+    return builder.image(source);
+  }
+  ```
+
+- React에서 Sanity 데이터 fetch 예시
 
   ```js
   client.fetch(
@@ -70,7 +102,8 @@
   );
   ```
 
-- Sanity 이미지 URL 빌더 사용 예시:
+- Sanity 이미지 URL 빌더 사용 예시
+
   ```js
   import { urlFor } from "@/lib/sanity/sanityImageUrl";
   <img src={urlFor(item.thumbnail).width(400).height(220).fit("crop").url()} alt={item.title} />;
