@@ -1,12 +1,19 @@
-import NewsList from "@/components/NewsList";
+import { RouterProvider } from "react-router";
+import router from "@/router";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 function App() {
-  return (
-    <main className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold mb-4">React + Sanity</h1>
-      <NewsList />
-    </main>
-  );
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
+
+  useEffect(() => {
+    if (lang && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

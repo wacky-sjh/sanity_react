@@ -3,24 +3,28 @@ import { useNavigate } from "react-router-dom";
 import { client } from "@/lib/sanity/client";
 import { urlFor } from "@/lib/sanity/sanityImageUrl";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { useTranslation } from "react-i18next";
 
 export default function NewsList() {
   const [news, setNews] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
 
   useEffect(() => {
     client
       .fetch(
-        `*[_type == "news"] | order(createdAt desc) {
+        `*[_type == "news" && language == $lang] | order(createdAt desc) {
           _id,
           title,
           createdAt,
           thumbnail,
           content
         }`,
+        { lang },
       )
       .then((data) => setNews(data || []));
-  }, []);
+  }, [lang]);
 
   // 본문 일부 추출 함수 (Portable Text 블록에서 텍스트만 추출)
   function getPreviewText(content: any, maxLength = 100) {
@@ -41,7 +45,7 @@ export default function NewsList() {
         <Card
           key={item._id}
           className="cursor-pointer hover:shadow-lg transition-shadow pt-0"
-          onClick={() => navigate(`/news/${item._id}`)}
+          onClick={() => navigate(`/${lang}/news/${item._id}`)}
         >
           {item.thumbnail && (
             <img
