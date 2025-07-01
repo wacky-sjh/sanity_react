@@ -69,6 +69,18 @@ export default defineConfig({
                       ),
                   ]),
               ),
+            S.listItem()
+              .id('products')
+              .title('상품')
+              .child(
+                S.documentList()
+                  .id('products_list')
+                  .title('상품')
+                  .filter('_type == "product"')
+                  .canHandleIntent((intentName, params) => {
+                    return intentName === 'create' && params.type === 'product'
+                  }),
+              ),
           ]),
     }),
     visionTool(),
